@@ -1,0 +1,75 @@
+There are 5 main steps for any software design:
+1.Gathering all functional and non-functional requirements.
+2.Create Use-Case diagram i.e, High-Level abstraction
+3.Create Class diagram i.e, Low-Level abstraction
+4.Writing the skeleton code.
+5.Writing the complete code.
+
+1.Gathering all functional and non-functional requirements:-
+----------------------------------------------------------
+Functional requirements:-
+-----------------------
+i.Crawls a list of urls
+ii.Generates reverse index of words to pages containing the search terms
+iii.Generates titles and snippets for pages
+iv.Title and snippets are static, they do not change based on search query
+v.User inputs a search term and sees a list of relevant pages with titles and snippets the crawler generated
+Non-Functional requirements:-
+---------------------------
+i.Traffic is not evenly distributed i.e,Some searches are very popular, while others are only executed once
+ii.Support only anonymous users
+iii.Generating search results should be fast
+iv.The web crawler should not get stuck in an infinite loop i.e, the graph should not contain a cycle
+v.Pages need to be crawled regularly to ensure freshness
+
+2.Create Use-Case diagram i.e, High-Level abstraction
+
+The Client sends a request to the Web Server, running as a reverse proxy
+The Web Server forwards the request to the Query API server
+The Query API server does the following:
+Parses the query
+Removes markup
+Breaks up the text into terms
+Fixes typos
+Normalizes capitalization
+Converts the query to use boolean operations
+Uses the Reverse Index Service to find documents matching the query
+The Reverse Index Service ranks the matching results and returns the top ones
+Uses the Document Service to return titles and snippets
+
+3.Create Class diagram i.e, Low-Level abstraction
+
+The Crawler Service processes each page link by doing the following in a loop:
+Takes the top ranked page link to crawl
+Checks crawled_links in the NoSQL Database for an entry with a similar page signature
+If we have a similar page, reduces the priority of the page link
+This prevents us from getting into a cycle
+Continue
+Else, crawls the link
+Adds a job to the Reverse Index Service queue to generate a reverse index
+Adds a job to the Document Service queue to generate a static title and snippet
+Generates the page signature
+Removes the link from links_to_crawl in the NoSQL Database
+Inserts the page link and signature to crawled_links in the NoSQL Database
+
+NOTE:-
+----
+Steps 4 and 5 are implemented after the design phase.
+
+The overall design will be implemented based on the factors and components mentioned below:
+1.Scalability
+2.Performance
+3.Latency & Throughput
+4.Consistency
+5.Availability
+6.Partition Tolerance
+7.CAP Theorem
+8.DNS(Domain Name System)
+9.CDN(Content Delivery Networks)
+10.Load balancers & Reverse Proxy
+11.Microservices
+12.Databases(SQL and NoSQL)
+13.Caching
+14.Message Queues
+
+Redis will be used as the NoSQL database for this application.
